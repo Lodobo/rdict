@@ -73,8 +73,8 @@ fn print_word_information(output: &mut String, row: &structs::Row) -> Result<(),
             for def in definition.glosses.as_ref().unwrap() {
                 write!(
                     output,
-                    "\n-{}\n",
-                    Style::new().bold().paint(wrap_text(def, 90, 1))
+                    "\n{}\n",
+                    Style::new().bold().paint(wrap_text(def, 90, 2))
                 )?;
             }
             if let Some(examples) = &definition.examples {
