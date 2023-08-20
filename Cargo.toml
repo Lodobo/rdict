@@ -1,0 +1,29 @@
+[package]
+name = "rdict"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "rdict"
+path = "src/bin/rdict.rs"
+
+[[bin]]
+name = "download-json"
+path = "src/bin/download-json.rs"
+
+[[bin]]
+name = "json-to-db"
+path = "src/bin/json-to-db.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ansi_term = "0.12.1"
+clap = { version = "4.3.22", features = ["derive"] }
+dirs = "5.0.1"
+indicatif = "0.17.6"
+pager-rs = "0.2.1"
+reqwest = { version = "0.11.18", features = ["blocking"] }
+rusqlite = {version = "0.29.0", features = ["bundled"]}
+serde = { version = "1.0.183", features = ["derive"]}
+serde_json = "1.0.105"
