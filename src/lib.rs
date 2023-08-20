@@ -36,7 +36,7 @@ pub mod format {
                 if i == 0 {
                     wrapped.push_str(&format!("{}{}", indent, word));
                     space_left -= word.len();
-                } else if word.len() + 1 > space_left {
+                } else if word.len() + 1> space_left {
                     wrapped.push('\n');
                     wrapped.push_str(&format!("{}{}", indent, word));
                     space_left = max_width.saturating_sub(word.len());
