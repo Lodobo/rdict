@@ -56,7 +56,6 @@ fn main() -> Result<(), AppError> {
             "INSERT INTO en (word, pos, information) values (?1, ?2, ?3)",
             [&word.word, &word.pos, &information_cow],
         )?;
-
         progress_bar.set_position((index + 1000) as u64);
     }
 
