@@ -3,7 +3,7 @@ use clap::Parser;
 use pager_rs::{CommandList, State, StatusBar};
 use rdict::{
     format::{panel, wrap_text},
-    structs,
+    structs::{Information, Row},
 };
 use rusqlite::{Connection, Result};
 use std::{error::Error, fmt::Write};
@@ -12,7 +12,7 @@ use std::{error::Error, fmt::Write};
 #[command(name = "rdict")]
 #[command(author = "Lodobo. <lodobo.n8qbt@simplelogin.com>")]
 #[command(version = "1.0")]
-#[command(about = "Offline CLI dictionary", long_about = None)]
+#[command(about = "Offline CLI dictionary")]
 struct Cli {
     /// Search word
     #[arg(short, long)]
@@ -21,17 +21,14 @@ struct Cli {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut output = String::new();
-    let cli = Cli::parse();
-    let home_dir = rdict::utils::get_home_directory()?;
-    let rdict_dir = home_dir.join(".local/share/rdict");
-    let path_to_db = &rdict_dir.join("en.db");
-    let conn = Connection::open(path_to_db)?;
-    let rows = sql_query(&conn, &cli.word)?;
-    for row in rows {
+    for row in sql_query()? {
         print_word_information(&mut output, &row)?;
     }
-    let status_bar = StatusBar::new(format!("rdict -w {}", &cli.word));
-    let mut state = State::new(output, status_bar, CommandList::default())?;
+    let mut state = State::new(
+        output,
+        StatusBar::new("rdict".to_string()),
+        CommandList::default(),
+    )?;
     state.show_line_numbers = false;
     pager_rs::init()?;
     pager_rs::run(&mut state)?;
@@ -39,17 +36,24 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn print_word_information(output: &mut String, row: &structs::Row) -> Result<(), Box<dyn Error>> {
+fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn Error>> {
     // Print Panel
-    let panel = panel(&row.pos.to_uppercase(), &row.word);
-    write!(output, "\n{}\n", Style::new().bold().paint(panel))?;
+    write!(
+        output,
+        "\n{}\n",
+        Style::new()
+            .bold()
+            .paint(panel(&row.pos.to_uppercase(), &row.word))
+    )?;
     if let Some(information_json) = &row.information {
-        let information: structs::Information = serde_json::from_str(information_json)?;
-
+        let information: Information = serde_json::from_str(information_json)?;
         // Print Pronunciation
         if let Some(sounds) = &information.sounds {
-            let title = "# Pronunciation";
-            write!(output, "\n{}\n\n", Style::new().bold().paint(title))?;
+            write!(
+                output,
+                "\n{}\n\n",
+                Style::new().bold().paint("# Pronunciation")
+            )?;
             for pronunciation in sounds {
                 if let Some(ipa) = &pronunciation.ipa {
                     write!(output, "  {}", ipa)?;
@@ -62,13 +66,11 @@ fn print_word_information(output: &mut String, row: &structs::Row) -> Result<(),
         }
         // Print Etymology
         if let Some(etymology) = &information.etymology_text {
-            let title = "# Etymology";
-            write!(output, "\n{}\n\n", Style::new().bold().paint(title))?;
+            write!(output, "\n{}\n\n", Style::new().bold().paint("# Etymology"))?;
             writeln!(output, "{}", wrap_text(etymology, 90, 2))?;
         }
         // Print Definitions
-        let title = "# Definitions";
-        write!(output, "\n{}\n", Style::new().bold().paint(title))?;
+        write!(output, "\n{}\n", Style::new().bold().paint("# Definitions"))?;
         for definition in &information.senses {
             for def in definition.glosses.as_ref().unwrap() {
                 write!(
@@ -89,10 +91,13 @@ fn print_word_information(output: &mut String, row: &structs::Row) -> Result<(),
     Ok(())
 }
 
-fn sql_query(conn: &Connection, query_word: &str) -> Result<Vec<structs::Row>> {
+fn sql_query() -> Result<Vec<Row>, Box<dyn Error>> {
+    let path_to_db = rdict::utils::get_home_directory()?.join(".local/share/rdict/en.db");
+    let conn = Connection::open(path_to_db)?;
+    let query_word = Cli::parse().word;
     let mut stmt = conn.prepare("SELECT word, pos, information FROM en where word=?1;")?;
     let row_iter = stmt.query_map([&query_word], |row| {
-        Ok(structs::Row {
+        Ok(Row {
             word: row.get(0)?,
             pos: row.get(1)?,
             information: row.get(2)?,

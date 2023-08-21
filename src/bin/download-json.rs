@@ -19,8 +19,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn download_file(url: &str) -> Result<(), Box<dyn Error>> {
     let mut response = reqwest::blocking::get(url)?;
     let total_size = response.content_length().unwrap_or(0);
-    let pb = ProgressBar::new(total_size);
-    pb.set_style(
+    let progress_bar = ProgressBar::new(total_size);
+    progress_bar.set_style(
         indicatif::ProgressStyle::with_template(
             "[{bar:40.cyan/blue}][{percent}%][{elapsed_precise}][{bytes_per_sec}][ETA: {eta}]",
         )
@@ -28,8 +28,7 @@ fn download_file(url: &str) -> Result<(), Box<dyn Error>> {
         .progress_chars("##-"),
     );
 
-    let home_dir = rdict::utils::get_home_directory()?;
-    let rdict_dir = home_dir.join(".local/share/rdict");
+    let rdict_dir = rdict::utils::get_home_directory()?.join(".local/share/rdict");
     fs::create_dir_all(&rdict_dir)?;
     let mut file = fs::File::create(&rdict_dir.join("en.jsonl"))?;
     let mut buffer = [0; 8192];
@@ -45,10 +44,10 @@ fn download_file(url: &str) -> Result<(), Box<dyn Error>> {
         }
         file.write_all(&buffer[..bytes_read])?;
         downloaded += bytes_read as u64;
-        pb.set_position(downloaded);
+        progress_bar.set_position(downloaded);
     }
 
-    pb.finish_with_message("Download complete.");
+    progress_bar.finish_with_message("Download complete.");
 
     Ok(())
 }
