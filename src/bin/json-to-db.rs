@@ -25,7 +25,12 @@ fn main() -> Result<(), AppError> {
 
 fn setup_database(rdict_dir: &std::path::PathBuf) -> Result<Connection, AppError> {
     fs::create_dir_all(rdict_dir)?;
-    let conn = Connection::open(rdict_dir.join("en.db"))?;
+    // Delete the existing database file if it exists
+    let db_path = rdict_dir.join("en.db");
+    if db_path.exists() {
+        fs::remove_file(&db_path)?;
+    }
+    let conn = Connection::open(db_path)?;
     Ok(conn)
 }
 
