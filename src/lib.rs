@@ -55,36 +55,43 @@ pub mod format {
 
 pub mod structs {
     use serde::{Deserialize, Serialize};
+    use std::borrow::Cow;
 
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Word {
-        pub word: String,
-        pub pos: String,
+    #[derive(Serialize, Deserialize)]
+    pub struct Word<'a> {
+        #[serde(borrow)]
+        pub word: Cow<'a, str>,
+        #[serde(borrow)]
+        pub pos: Cow<'a, str>,
     }
 
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Information {
-        pub senses: Vec<Sense>,
-        pub etymology_text: Option<String>,
-        pub sounds: Option<Vec<Sound>>,
+    #[derive(Serialize, Deserialize)]
+    pub struct WordInfo<'a> {
+        pub senses: Vec<Sense<'a>>,
+        #[serde(borrow)]
+        pub etymology_text: Option<Cow<'a, str>>,
+        pub sounds: Option<Vec<Sound<'a>>>,
     }
 
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Sound {
-        pub ipa: Option<String>,
-        pub tags: Option<Vec<String>>,
+    #[derive(Serialize, Deserialize)]
+    pub struct Sound<'a> {
+        #[serde(borrow)]
+        pub ipa: Option<Cow<'a, str>>,
+        #[serde(borrow)]
+        pub tags: Option<Vec<Cow<'a, str>>>,
     }
 
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Sense {
-        pub glosses: Option<Vec<String>>,
-        pub examples: Option<Vec<Example>>,
+    #[derive(Serialize, Deserialize)]
+    pub struct Sense<'a> {
+        #[serde(borrow)]
+        pub glosses: Option<Vec<Cow<'a, str>>>,
+        pub examples: Option<Vec<Example<'a>>>,
     }
 
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Example {
-        pub text: Option<String>,
-        pub reference: Option<String>,
+    #[derive(Serialize, Deserialize)]
+    pub struct Example<'a> {
+        #[serde(borrow)]
+        pub text: Option<Cow<'a, str>>,
     }
 
     pub struct Row {

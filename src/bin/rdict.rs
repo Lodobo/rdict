@@ -3,7 +3,7 @@ use clap::Parser;
 use pager_rs::{CommandList, State, StatusBar};
 use rdict::{
     format::{panel, wrap_text},
-    structs::{Information, Row},
+    structs::{WordInfo, Row},
 };
 use rusqlite::{Connection, Result};
 use std::{error::Error, fmt::Write};
@@ -46,7 +46,7 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn 
             .paint(panel(&row.pos.to_uppercase(), &row.word))
     )?;
     if let Some(information_json) = &row.information {
-        let information: Information = serde_json::from_str(information_json)?;
+        let information: WordInfo = serde_json::from_str(information_json)?;
         // Print Pronunciation
         if let Some(sounds) = &information.sounds {
             write!(
@@ -95,7 +95,7 @@ fn sql_query() -> Result<Vec<Row>, Box<dyn Error>> {
     let path_to_db = rdict::utils::get_home_directory()?.join(".local/share/rdict/en.db");
     let conn = Connection::open(path_to_db)?;
     let query_word = Cli::parse().word;
-    let mut stmt = conn.prepare("SELECT word, pos, information FROM en where word=?1;")?;
+    let mut stmt = conn.prepare("SELECT word, pos, information FROM en WHERE word = ?1;")?;
     let row_iter = stmt.query_map([&query_word], |row| {
         Ok(Row {
             word: row.get(0)?,
