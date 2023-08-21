@@ -43,7 +43,6 @@ fn main() -> Result<(), AppError> {
 
     let file = fs::File::open(rdict_dir.join("en.jsonl"))?;
     let reader = BufReader::new(file);
-
     for (index, line) in reader.lines().enumerate() {
         // deserialize, reorganize and reserialize.
         let word: Word = serde_json::from_str::<Word>(line.as_ref().unwrap())?;

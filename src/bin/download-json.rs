@@ -1,11 +1,11 @@
 use indicatif::ProgressBar;
+use rdict::error::AppError;
 use std::{
-    error::Error,
     fs,
     io::{Read, Write},
 };
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), AppError> {
     let url = "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.json";
     match download_file(url) {
         Ok(_) => println!("File downloaded successfully as: en.jsonl"),
@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn download_file(url: &str) -> Result<(), Box<dyn Error>> {
+fn download_file(url: &str) -> Result<(), AppError> {
     let mut response = reqwest::blocking::get(url)?;
     let total_size = response.content_length().unwrap_or(0);
     let progress_bar = ProgressBar::new(total_size);

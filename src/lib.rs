@@ -108,11 +108,13 @@ pub mod error {
     use std::fmt;
     use std::fmt::Error as FmtError;
     use std::io::Error as IoError;
+    use reqwest::Error as HtmlError;
 
     #[derive(Debug)]
     pub enum AppError {
         Sqlite(SqlError),
         Json(JsonError),
+        Html(HtmlError),
         Io(IoError),
         Fmt(FmtError),
         Box(Box<dyn StdError>),
@@ -126,6 +128,11 @@ pub mod error {
     impl From<JsonError> for AppError {
         fn from(err: JsonError) -> Self {
             AppError::Json(err)
+        }
+    }
+    impl From<HtmlError> for AppError {
+        fn from(err: HtmlError) -> Self {
+            AppError::Html(err)
         }
     }
     impl From<IoError> for AppError {
@@ -164,10 +171,12 @@ pub mod error {
             match self {
                 AppError::Sqlite(error) => write!(f, "Rusqlite error: {}", error),
                 AppError::Json(error) => write!(f, "serde_json error: {}", error),
+                AppError::Html(error) => write!(f, "Reqwest error: {}", error),
                 AppError::Io(error) => write!(f, "IO error: {}", error),
                 AppError::Fmt(error) => write!(f, "Fmt error: {}", error),
                 AppError::Box(error) => write!(f, "Std Error: {}", error),
                 AppError::NoResults => write!(f, "No results found"),
+
             }
         }
     }
