@@ -102,14 +102,22 @@ pub mod structs {
 }
 
 pub mod error {
+    use indicatif::style::TemplateError;
+    use reqwest::Error as HtmlError;
     use rusqlite::Error as SqlError;
     use serde_json::Error as JsonError;
     use std::error::Error as StdError;
     use std::fmt;
     use std::fmt::Error as FmtError;
     use std::io::Error as IoError;
-    use reqwest::Error as HtmlError;
 
+    #[derive(Debug)]
+    pub struct NoResults;
+    impl std::fmt::Display for NoResults {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "No results found")
+        }
+    }
     #[derive(Debug)]
     pub enum AppError {
         Sqlite(SqlError),
@@ -118,6 +126,7 @@ pub mod error {
         Io(IoError),
         Fmt(FmtError),
         Box(Box<dyn StdError>),
+        Template(TemplateError),
         NoResults,
     }
     impl From<SqlError> for AppError {
@@ -145,17 +154,14 @@ pub mod error {
             AppError::Fmt(err)
         }
     }
+    impl From<TemplateError> for AppError {
+        fn from(err: TemplateError) -> Self {
+            AppError::Template(err)
+        }
+    }
     impl From<Box<dyn StdError>> for AppError {
         fn from(err: Box<dyn StdError>) -> Self {
             AppError::Box(err)
-        }
-    }
-
-    #[derive(Debug)]
-    pub struct NoResults;
-    impl std::fmt::Display for NoResults {
-        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(f, "No results found")
         }
     }
     impl StdError for NoResults {
@@ -174,9 +180,9 @@ pub mod error {
                 AppError::Html(error) => write!(f, "Reqwest error: {}", error),
                 AppError::Io(error) => write!(f, "IO error: {}", error),
                 AppError::Fmt(error) => write!(f, "Fmt error: {}", error),
+                AppError::Template(error) => write!(f, "Progress bar template error: {}", error),
                 AppError::Box(error) => write!(f, "Std Error: {}", error),
                 AppError::NoResults => write!(f, "No results found"),
-
             }
         }
     }

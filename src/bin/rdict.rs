@@ -7,7 +7,7 @@ use rdict::{
     structs::{Row, WordInfo},
 };
 use rusqlite::Connection;
-use std::fmt::Write;
+use std::{fmt::Write, process};
 
 // Define the command-line arguments
 #[derive(Parser)]
@@ -23,9 +23,22 @@ struct Cli {
 
 fn main() -> Result<(), AppError> {
     let mut output = String::new();
-    for row in sql_query()? {
-        print_word_information(&mut output, &row)?;
+
+    match sql_query() {
+        Ok(rows) => {
+            for row in rows {
+                if let Err(err) = print_word_information(&mut output, &row) {
+                    eprintln!("{}", err);
+                    process::exit(1);
+                }
+            }
+        }
+        Err(err) => {
+            eprintln!("{}", err);
+            process::exit(1);
+        }
     }
+
     let mut state = State::new(
         output,
         StatusBar::new("rdict".to_string()),
