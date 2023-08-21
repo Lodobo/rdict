@@ -7,12 +7,10 @@ use std::{
 
 fn main() -> Result<(), Box<dyn Error>> {
     let url = "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.json";
-
     match download_file(url) {
         Ok(_) => println!("File downloaded successfully as: en.jsonl"),
         Err(err) => eprintln!("Error: {}", err),
     }
-
     Ok(())
 }
 
