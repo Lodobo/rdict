@@ -26,11 +26,7 @@ fn main() -> Result<(), AppError> {
     )?;
 
     // Open JSON File
-    let file = fs::File::open(rdict_dir.join("en.jsonl"))?;
-    let reader = BufReader::new(file);
-
-    // Begin a transaction
-    let transaction = conn.transaction()?;
+    let reader = BufReader::new(fs::File::open(rdict_dir.join("en.jsonl"))?);
     let line_count = reader.lines().count() as u64;
     let progress_bar = ProgressBar::new(line_count);
     progress_bar.set_style(
@@ -41,8 +37,9 @@ fn main() -> Result<(), AppError> {
         .progress_chars("##-"),
     );
 
-    let file = fs::File::open(rdict_dir.join("en.jsonl"))?;
-    let reader = BufReader::new(file);
+    // Begin a transaction
+    let transaction = conn.transaction()?;
+    let reader = BufReader::new(fs::File::open(rdict_dir.join("en.jsonl"))?);
     for (index, line) in reader.lines().enumerate() {
         // deserialize, reorganize and reserialize.
         let word: Word = serde_json::from_str::<Word>(line.as_ref().unwrap())?;
