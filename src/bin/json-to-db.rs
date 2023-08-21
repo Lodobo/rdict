@@ -11,8 +11,10 @@ use std::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Open directory where databse and json file is stored
     let rdict_dir = utils::get_home_directory()?.join(".local/share/rdict");
     fs::create_dir_all(&rdict_dir)?;
+    // Open database
     let mut conn = Connection::open(&rdict_dir.join("en.db"))?;
     conn.execute(
         "create table if not exists en (
@@ -24,6 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         (),
     )?;
 
+    // Open JSON File
     let file = fs::File::open(rdict_dir.join("en.jsonl"))?;
     let reader = BufReader::new(file);
 
@@ -39,10 +42,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .progress_chars("##-"),
     );
 
-    let file = fs::File::open(rdict_dir.join("en.jsonl"))?; // Open the file again
+    let file = fs::File::open(rdict_dir.join("en.jsonl"))?;
     let reader = BufReader::new(file);
 
     for (index, line) in reader.lines().enumerate() {
+        // deserialize, reorganize and reserialize without the useless information.
         let word: Word = serde_json::from_str::<Word>(line.as_ref().unwrap())?;
         let information: WordInfo = serde_json::from_str::<WordInfo>(line.as_ref().unwrap())?;
         let information: String = serde_json::to_string(&information).unwrap();
