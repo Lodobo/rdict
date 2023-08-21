@@ -1,13 +1,13 @@
 use indicatif::ProgressBar;
 use rdict::{
-    structs::{WordInfo, Word},
+    structs::{Word, WordInfo},
     utils,
 };
 use rusqlite::{Connection, Result};
 use std::{
+    borrow::Cow,
     fs,
     io::{BufRead, BufReader},
-    borrow::Cow,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

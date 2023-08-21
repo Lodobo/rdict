@@ -2,12 +2,14 @@ use ansi_term::Style;
 use clap::Parser;
 use pager_rs::{CommandList, State, StatusBar};
 use rdict::{
+    error::AppError,
     format::{panel, wrap_text},
-    structs::{WordInfo, Row},
+    structs::{Row, WordInfo},
 };
-use rusqlite::{Connection, Result};
-use std::{error::Error, fmt::Write};
+use rusqlite::Connection;
+use std::fmt::Write;
 
+// Define the command-line arguments
 #[derive(Parser)]
 #[command(name = "rdict")]
 #[command(author = "Lodobo. <lodobo.n8qbt@simplelogin.com>")]
@@ -19,7 +21,7 @@ struct Cli {
     word: String,
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), AppError> {
     let mut output = String::new();
     for row in sql_query()? {
         print_word_information(&mut output, &row)?;
@@ -36,8 +38,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn Error>> {
-    // Print Panel
+// Function to format and print word information
+fn print_word_information(output: &mut String, row: &Row) -> Result<(), AppError> {
+    // Print Panel (Part of speech + Word)
     write!(
         output,
         "\n{}\n",
@@ -66,8 +69,10 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn 
         }
         // Print Etymology
         if let Some(etymology) = &information.etymology_text {
-            write!(output, "\n{}\n\n", Style::new().bold().paint("# Etymology"))?;
-            writeln!(output, "{}", wrap_text(etymology, 90, 2))?;
+            if etymology.len() > 0 {
+                write!(output, "\n{}\n\n", Style::new().bold().paint("# Etymology"))?;
+                writeln!(output, "{}", wrap_text(etymology, 90, 2))?;
+            }
         }
         // Print Definitions
         write!(output, "\n{}\n", Style::new().bold().paint("# Definitions"))?;
@@ -91,7 +96,8 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn 
     Ok(())
 }
 
-fn sql_query() -> Result<Vec<Row>, Box<dyn Error>> {
+// Function to execute the SQL query and retrieve word information
+fn sql_query() -> Result<Vec<Row>, AppError> {
     let path_to_db = rdict::utils::get_home_directory()?.join(".local/share/rdict/en.db");
     let conn = Connection::open(path_to_db)?;
     let query_word = Cli::parse().word;
@@ -103,5 +109,10 @@ fn sql_query() -> Result<Vec<Row>, Box<dyn Error>> {
             information: row.get(2)?,
         })
     })?;
-    Ok(row_iter.filter_map(Result::ok).collect())
+    let results: Vec<Row> = row_iter.filter_map(Result::ok).collect();
+
+    if results.is_empty() {
+        return Err(AppError::NoResults);
+    }
+    Ok(results)
 }
