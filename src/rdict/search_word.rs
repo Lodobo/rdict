@@ -45,7 +45,6 @@ pub fn search_word(query_word: &String) {
             },])
         
         ])
-        // CommandList::default(),
     )
     .unwrap();
     state.show_line_numbers = false;
