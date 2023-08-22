@@ -21,7 +21,7 @@ $ cargo build --release
 #### Download json (1.5GB):
 ```bash
 # This will download a jsonl file to ~/.local/share/rdict
-$ ./target/releae/rdict download-json
+$ ./target/release/rdict download-json
 ```
 
 #### Create sqlite database:
