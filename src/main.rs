@@ -1,5 +1,3 @@
-#[allow(dead_code)]
-#[allow(unused)]
 mod rdict;
 use crate::rdict::{
     download_json::download_json, json_to_db::json_to_db, search_word::search_word,

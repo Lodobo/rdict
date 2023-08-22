@@ -1,15 +1,13 @@
+use std::fmt::Write;
 use crate::rdict::{
-    download_json,
     error::AppError,
     format::{panel, wrap_text},
-    json_to_db,
     structs::{Row, WordInfo},
 };
 use ansi_term::Style;
-use clap::{Args, Parser, Subcommand};
 use pager_rs::{CommandList, State, StatusBar};
 use rusqlite::Connection;
-use std::{fmt, fmt::Write, process};
+use std::process;
 
 pub fn search_word(query_word: &String) {
     let mut output = String::new();
