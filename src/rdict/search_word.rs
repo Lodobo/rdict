@@ -35,7 +35,7 @@ pub fn search_word(query_word: &String) {
             CommandList(vec![
                 Command {
                 cmd: vec![CommandType::Key(KeyCode::Char('j'))],
-                desc: "Cursor up".to_string(),
+                desc: "Cursor down".to_string(),
                 func: &|state: &mut State| state.down(),
             },
             Command {
