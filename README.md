@@ -3,31 +3,23 @@ An offline CLI dictionary written in rust, using data from wiktionary.
 
 ## Installation
 
-### From source:
-
-#### Clone the Repository:
-```bash
-$ git clone https://github.com/Lodobo/rdict
-$ cd rdict
-```
-
 ####  Install the Rust toolchain: [https://rustup.rs](https://rustup.rs)
 
-#### Build and install:
+#### Install from source:
 ```bash
-$ cargo build --release
+$ cargo install --git https://github.com/Lodobo/rdict
 ```
 
 #### Download json (1.5GB):
 ```bash
 # This will download a jsonl file to ~/.local/share/rdict
-$ ./target/release/rdict download-json
+$ rdict download-json
 ```
 
 #### Create sqlite database:
 ```bash
 # This will create a .db file to ~/.local/share/rdict
-$ ./target/release/rdict json-to-db
+$ rdict json-to-db
 ```
 
 ## Usage of rdict:
