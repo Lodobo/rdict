@@ -1,13 +1,14 @@
-use std::fmt::Write;
 use crate::rdict::{
     error::AppError,
     format::{panel, wrap_text},
     structs::{Row, WordInfo},
 };
 use ansi_term::Style;
-use pager_rs::{CommandList, State, StatusBar};
+use pager_rs::{Command, CommandList, CommandType, State, StatusBar};
 use rusqlite::Connection;
+use std::fmt::Write;
 use std::process;
+use crossterm::event::KeyCode;
 
 pub fn search_word(query_word: &String) {
     let mut output = String::new();
@@ -29,7 +30,22 @@ pub fn search_word(query_word: &String) {
     let mut state = State::new(
         output,
         StatusBar::new("rdict".to_string()),
-        CommandList::default(),
+        CommandList::combine(vec![
+            CommandList::default(),
+            CommandList(vec![
+                Command {
+                cmd: vec![CommandType::Key(KeyCode::Char('j'))],
+                desc: "Cursor up".to_string(),
+                func: &|state: &mut State| state.down(),
+            },
+            Command {
+                cmd: vec![CommandType::Key(KeyCode::Char('k'))],
+                desc: "Cursor up".to_string(),
+                func: &|state: &mut State| state.up(),
+            },])
+        
+        ])
+        // CommandList::default(),
     )
     .unwrap();
     state.show_line_numbers = false;
