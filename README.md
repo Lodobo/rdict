@@ -30,6 +30,6 @@ $ rdict json-to-db
 |-V|Print version|
 
 ## See also
-- Tatu Ylonen's [Wiktextract](https://github.com/tatuylonen/wiktextract): A utility for extracting data from wiktionary. The lexical data used by gdict comes from dumps provided by Ylonen on [kaikki.org](https://kaikki.org/)
+- Tatu Ylonen's [Wiktextract](https://github.com/tatuylonen/wiktextract): A utility for extracting data from wiktionary. The lexical data used by rdict comes from dumps provided by Ylonen on [kaikki.org](https://kaikki.org/)
     > [Wiktextract: Wiktionary as Machine-Readable Structured Data](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.140.pdf), Proceedings of the 13th Conference on Language Resources and Evaluation (LREC), pp. 1317-1325, Marseille, 20-25 June 2022.
 - [gdict](https://github.com/Lodobo/gdict): Another version of this software written in go.
