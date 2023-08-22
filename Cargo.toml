@@ -5,15 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "rdict"
-path = "src/bin/rdict.rs"
-
-[[bin]]
-name = "download-json"
-path = "src/bin/download-json.rs"
-
-[[bin]]
-name = "json-to-db"
-path = "src/bin/json-to-db.rs"
+path = "src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
