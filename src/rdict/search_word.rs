@@ -58,7 +58,7 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), AppError
     // Print Panel (Part of speech + Word)
     write!(
         output,
-        "\n{}\n",
+        "{}\n",
         Style::new()
             .bold()
             .paint(panel(&row.pos.to_uppercase(), &row.word))
@@ -108,6 +108,7 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), AppError
             }
         }
     }
+    writeln!(output)?;
     Ok(())
 }
 
