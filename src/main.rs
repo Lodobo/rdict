@@ -1,8 +1,6 @@
 mod rdict;
-use crate::rdict::{
-    download_json::download_json, json_to_db::json_to_db, search_word::search_word,
-};
 use clap::{Args, Parser, Subcommand};
+use rdict::{download_json::download_json, json_to_db::json_to_db, search_word::search_word};
 
 // Define the command-line arguments
 #[derive(Parser)]
