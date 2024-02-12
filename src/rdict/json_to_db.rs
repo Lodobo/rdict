@@ -1,5 +1,4 @@
 use crate::rdict::{
-    error::AppError,
     structs::{Word, WordInfo},
     utils,
 };
@@ -7,6 +6,7 @@ use indicatif::ProgressBar;
 use rusqlite::{Connection, Result};
 use std::{
     borrow::Cow,
+    error::Error,
     fs,
     io::{BufRead, BufReader},
     path::PathBuf,
@@ -29,7 +29,7 @@ pub fn json_to_db() {
     }
 }
 
-fn setup_database(rdict_dir: &std::path::PathBuf) -> Result<Connection, AppError> {
+fn setup_database(rdict_dir: &std::path::PathBuf) -> Result<Connection, Box<dyn Error>> {
     fs::create_dir_all(rdict_dir)?;
     // Delete the existing database file if it exists
     let db_path = rdict_dir.join("en.db");

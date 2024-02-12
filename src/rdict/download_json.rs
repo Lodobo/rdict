@@ -1,6 +1,6 @@
-use crate::rdict::error::AppError;
 use indicatif::ProgressBar;
 use std::{
+    error::Error,
     fs,
     io::{Read, Write},
 };
@@ -13,7 +13,7 @@ pub fn download_json() {
     }
 }
 
-fn download_and_save(url: &str) -> Result<(), AppError> {
+fn download_and_save(url: &str) -> Result<(), Box<dyn Error>> {
     let mut response = reqwest::blocking::get(url)?;
     let total_size = response.content_length().unwrap_or(0);
     let progress_bar = ProgressBar::new(total_size);
