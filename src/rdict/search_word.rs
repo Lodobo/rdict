@@ -1,3 +1,4 @@
+extern crate pager_rs;
 use crate::rdict::{
     format::{panel, wrap_text},
     structs::{Row, WordInfo},
@@ -84,7 +85,7 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn 
         if let Some(etymology) = &information.etymology_text {
             if etymology.len() > 0 {
                 write!(output, "\n{}\n\n", Style::new().bold().paint("# Etymology"))?;
-                writeln!(output, "{}", wrap_text(etymology, 90, 2))?;
+                writeln!(output, "{}", wrap_text(etymology, 2))?;
             }
         }
         // Print Definitions
@@ -94,13 +95,13 @@ fn print_word_information(output: &mut String, row: &Row) -> Result<(), Box<dyn 
                 write!(
                     output,
                     "\n{}\n",
-                    Style::new().bold().paint(wrap_text(def, 90, 2))
+                    Style::new().bold().paint(wrap_text(def, 2))
                 )?;
             }
             if let Some(examples) = &definition.examples {
                 for example in examples {
                     if let Some(text) = &example.text {
-                        write!(output, "\n{}\n", wrap_text(&format!("\"{}\"", text), 84, 6))?;
+                        write!(output, "\n{}\n", wrap_text(&format!("\"{}\"", text), 6))?;
                     }
                 }
             }
