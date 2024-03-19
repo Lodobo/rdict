@@ -1,3 +1,5 @@
+use crossterm::terminal::size;
+
 pub fn panel(word_1: &str, word_2: &str) -> String {
     format!(
         "╭─{}─╮   ╭─{}─╮\n\
@@ -11,10 +13,14 @@ pub fn panel(word_1: &str, word_2: &str) -> String {
         "─".repeat(word_2.len())
     )
 }
-pub fn wrap_text(paragraph: &str, max_width: usize, indent_length: usize) -> String {
+
+pub fn wrap_text(paragraph: &str, indent_length: usize) -> String {
     let words = paragraph.split_whitespace().collect::<Vec<&str>>();
     let indent = " ".repeat(indent_length);
-    let mut space_left = max_width;
+    let (cols, _) = size().unwrap();
+    let max_width = (cols as usize).saturating_sub(7);
+    let mut space_left = (cols as usize).saturating_sub(7);
+
     words
         .iter()
         .enumerate()
