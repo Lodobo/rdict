@@ -1,3 +1,3 @@
 [submodule "pager-rs"]
 	path = pager-rs
-	url = git@github.com:Lodobo/pager-rs.git
+	url = https://github.com/Lodobo/pager-rs
