@@ -6,7 +6,7 @@ use std::{
 };
 
 pub fn download_json() {
-    let url = "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.json";
+    let url = "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl";
     match download_and_save(url) {
         Ok(_) => println!("Dictionary downloaded successfully as: en.jsonl"),
         Err(err) => eprintln!("Error: {}", err),
